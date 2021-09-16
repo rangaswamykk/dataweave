@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="169cf914-0804-4164-8360-19cc53afcb48" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="dataweaveFlow" doc:id="6927499f-47ca-48eb-b5cb-6245f8183063" >
+		<http:listener doc:name="Listener" doc:id="b60d890c-02ce-4110-917e-f4d131611dcd" config-ref="HTTP_Listener_config" path="dataweave"/>
+		<ee:transform doc:name="Transform Message" doc:id="0654aeb2-b4bb-49ad-85da-ef1186e9e846" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var a= [
+	{
+	"name" : "rangaswamy",
+	"id" : "516",
+	"working" : "mulesoft"
+      },
+      {
+   	"name" : "ranga",
+	"id" : "56",
+	"working" : "mule"
+	},
+	{
+   	"name" : "swamy",
+	"id" : "516",
+	"working" : "mule esb"
+	}
+	]
+---
+(a map{
+	name : $.name,
+	id : $.id,
+	working : $.working
+	}) groupBy $.id
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="18d374df-42fb-4d09-83f5-fc0ad2ba0201" message="#[payload]"/>
+	</flow>
+</mule>
